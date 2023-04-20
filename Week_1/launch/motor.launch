@@ -1,0 +1,10 @@
+<?xml version="1.0" ?>
+<launch>
+
+    <rosparam file = "$(find mini_c1)/config/points.yaml" command = "load"  />
+    <rosparam file = "$(find mini_c1)/config/sig_op.yaml" command = "load"  />
+
+    <node name="Control" pkg="mini_c1" type="move.py" output="screen" launch-prefix="gnome-terminal --command"/>
+    <node name="Input" pkg="mini_c1" type="set_point.py" output="screen" launch-prefix="gnome-terminal --command"/>
+    
+</launch>
