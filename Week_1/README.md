@@ -14,3 +14,5 @@ https://youtu.be/BvMBRT9hpDA
 Trayectoria zig zag:
 https://youtu.be/-Fjb41K0HVs
 
+Trayectoria cuadrada en gazebo:
+https://youtube.com/shorts/NnZ56crQvk8
