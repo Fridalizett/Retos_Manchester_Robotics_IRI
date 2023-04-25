@@ -1,0 +1,9 @@
+<?xml version="1.0" ?>
+<launch>
+
+    <rosparam file = "$(find mini_c2)/config/params.yaml" command = "load"  />
+    
+    <node name="controller" pkg="mini_c2" type="controller.py" output="screen" launch-prefix="gnome-terminal --command"/>
+    <node name="path_generator" pkg="mini_c2" type="path_generator.py" output="screen" launch-prefix="gnome-terminal --command"/>
+    
+</launch>
