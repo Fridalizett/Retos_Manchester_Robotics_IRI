@@ -74,17 +74,11 @@ class Controller:
                 self.error_diff_l = (self.error_dist - self.error_prev_l) / (dt+0.000000001)
                 self.error_prev_l = self.error_dist
                 self.controlador_vl= self.kp_l * self.error_dist + self.ki_l * self.error_sum_l + self.kd_l * self.error_diff_l
-                #self.velocidad_l =self.last_vl +((self.controlador_vl-self.last_vl))
-                #self.last_vl=self.velocidad_l
-                #controlador angular
                 self.error_sum_ang += self.error_ang * dt
                 self.error_diff_ang = (self.error_ang - self.error_prev_ang) / (dt+0.00001)
                 self.error_prev_ang = self.error_ang
                 self.controlador_va =self.kp_ang * self.error_ang + self.ki_ang * self.error_sum_ang + self.kd_ang * self.error_diff_ang
-                #esta linea la tengo que quitar?
-                #self.velocidad_ang = self.last_va +((self.controlador_va-self.last_va))
-                #self.last_va=self.velocidad_ang
-             #Publicar las posiciones
+                #Publicar las posiciones
                 msg.linear.x = self.controlador_vl#self.controlador_vl
                 msg.angular.z = self.controlador_va
                 if self.error_ang==0 and self.error_dist==0:
