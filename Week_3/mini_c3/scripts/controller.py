@@ -30,9 +30,7 @@ class Controller:
         self.velocidad_ang=0
         self.controlador_vl=0.0
         self.controlador_va=0.0        
-        self.last_vl=0.0
-        self.last_va=0.0
-
+        
         #Inicializar nodos
         rospy.init_node("controller")
         rospy.Subscriber("/wr",Float32,self.wr_callback)
