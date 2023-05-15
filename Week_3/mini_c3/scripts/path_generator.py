@@ -2,15 +2,9 @@
 import rospy
 from std_msgs.msg import Float32
 from geometry_msgs.msg import Pose2D
-from mini_c3.msg import input_point
+from pssy_cat.msg import input_point
 import numpy as np
-#import cv2 
-#Publica donde se encuentra y la meta que debe  de alcanzar
-#El path debe de ser capaz de poder tomar decisiones y cambiar
-#las ganancias correspondientes
-#Dbe de ser capaz de decir al usuario si es capaz de llegar a esa posicion 
-#minimo debemos tener tres objetivos
-#Debe mostrar [x y w]
+
 
 class path_g:
     def __init__(self):
@@ -114,4 +108,3 @@ if __name__ == "__main__":
         controller.run()
     except rospy.ROSInterruptException:
         None
-    

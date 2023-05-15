@@ -17,7 +17,7 @@ class procesamiento:
         self.green_time = 0
         self.red_time = 0
         self.yellow_time = 0
-        self.color_imagen=0
+        self.color_imagen=0.00
 	#Definir suscriptores y publicadores
         self.image_sub = rospy.Subscriber('/video_source/raw',Image, self.image_callback) 
 
@@ -42,7 +42,7 @@ class procesamiento:
                                param1=50, param2=30,
                                minRadius=50, maxRadius=70)
         if circles is not None:
-            self.color_pub=0
+            #self.color_pub=0
             circles = np.uint16(np.around(circles))
             for i in circles[0,:]:
                 color = frame[i[1], i[0]]
@@ -71,7 +71,7 @@ class procesamiento:
                     pass
         self.color_pub.publish(self.color_imagen)
         rospy.loginfo(self.color_imagen)
-        cv2.imshow('Circulos detectados', frame)
+        #cv2.imshow('Circulos detectados', frame)
         cv2.waitKey(1)
         return frame
     def run(self):
@@ -82,7 +82,7 @@ class procesamiento:
             detection_rgb = cv2.cvtColor(detection, cv2.COLOR_BGR2RGB)
             #ros_img = self.bridge.cv2_to_imgmsg(detection)
             ros_img = self.bridge.cv2_to_imgmsg(detection_rgb)
-            self.image_pub.publish(ros_img)
+            #self.image_pub.publish(ros_img)
    
 if __name__ == "__main__":
     image_proc = procesamiento()

@@ -3,7 +3,7 @@ import rospy
 from std_msgs.msg import Float32
 from geometry_msgs.msg import Twist
 import numpy as np
-from mini_c3.msg import input_point
+from pssy_cat.msg import input_point
  
 class Controller:
     def __init__(self):
@@ -26,14 +26,15 @@ class Controller:
         self.error_ang=0.0
         self.first=True
         self.controlador_vl=0.0
-        self.controlador_va=0.0        
+        self.controlador_va=0.0  
+        self.color=0.0      
 
         #Inicializar nodos
         rospy.init_node("controller")
         rospy.Subscriber("/wr",Float32,self.wr_callback)
         rospy.Subscriber("/wl",Float32,self.wl_callback)
         rospy.Subscriber("/error",input_point,self.callback)
-        self.color=rospy.Subscriber('/color',Float32, self.color_callback)   
+        rospy.Subscriber('/color',Float32, self.color_callback)   
         self.pose_pub = rospy.Publisher('/cmd_vel',Twist,queue_size=10)
         
         self.rate = rospy.Rate(10)
@@ -77,7 +78,7 @@ class Controller:
                 self.controlador_vl= self.kp_l * self.error_dist + self.ki_l * self.error_sum_l + self.kd_l * self.error_diff_l
                 #controlador angular
                 self.error_sum_ang += self.error_ang * dt
-                self.error_diff_ang = (self.error_ang - self.error_prev_ang) / (dt+0.00001)
+                self.error_diff_ang = (self.error_ang - self.error_prev_ang) / (dt+0.0000001)
                 self.error_prev_ang = self.error_ang
                 self.controlador_va =self.kp_ang * self.error_ang + self.ki_ang * self.error_sum_ang + self.kd_ang * self.error_diff_ang
                 #Publicar las posiciones
@@ -95,7 +96,7 @@ class Controller:
                     msg.linear.x = 0
                     msg.angular.z = 0
                 print("Controlador_on")
-                print_info = "%3f | %3f" %(self.controlador_va,self.controlador_vl)
+                print_info = "%3f | %3f" %(self.color,msg.linear.x)
                 rospy.loginfo(print_info)
                 self.pose_pub.publish(msg)
                 self.rate.sleep()
@@ -116,4 +117,3 @@ if __name__ == "__main__":
         controller.run()
     except rospy.ROSInterruptException:
         None
-    
