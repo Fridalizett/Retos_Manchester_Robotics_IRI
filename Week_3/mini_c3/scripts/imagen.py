@@ -7,7 +7,6 @@ import rospy
 import cv_bridge
 from sensor_msgs.msg import Image
 from std_msgs.msg import Float32
-
 class procesamiento:
     def __init__(self):
         self.ancho = 640
@@ -37,7 +36,6 @@ class procesamiento:
         rotar = cv2.rotate(image,cv2.ROTATE_180)
         redimensionar = cv2.resize(rotar,(self.ancho, self.alto))
         frame = np.copy(redimensionar)  # Copiar la imagen original
-        #frame = self.image  # Utilizar la imagen almacenada en self.image
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         gray = cv2.medianBlur(gray, 5)
         circles = cv2.HoughCircles(gray, cv2.HOUGH_GRADIENT, 1, 20,
@@ -55,9 +53,6 @@ class procesamiento:
                     self.green_time = 0
                     self.red_time += 1
                     self.color_imagen=1
-                    #self.color_pub.publish(self.color_imagen)
-                    #if self.red_time > 2*30: # 1 segundos a una frecuencia de 30 fps
-                    #    self.color_imagen=1
                 elif color[2] > 100 and color[1] > 100 and color[0] < 100:
                     cv2.circle(frame,(i[0],i[1]),i[2],(0,255,255),2)
                     cv2.putText(frame, 'amarillo', (i[0], i[1]), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 255, 255), lineType=cv2.LINE_AA)
@@ -65,11 +60,6 @@ class procesamiento:
                     self.red_time = 0
                     self.green_time = 0
                     self.color_imagen=2
-                    #self.color_pub.publish(self.color_imagen)
-
-#                    if self.yellow_time > 2*30: # 2 segundos a una frecuencia de 30 fps
- #                       self.color_imagen=2
-
                 elif color[1] > color[0] and color[1] > color[2] and color[0] < 100 and color[2] < 100:
                     cv2.circle(frame,(i[0],i[1]),i[2],(0,255,0),2)
                     cv2.putText(frame, 'verde', (i[0], i[1]), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 255, 0), lineType=cv2.LINE_AA)
@@ -77,9 +67,6 @@ class procesamiento:
                     self.red_time = 0
                     self.yellow_time = 0
                     self.color_imagen=3
-                    #if self.green_time > 2*30: # 2 segundos a una frecuencia de 30 fps
-                    #    self.color_imagen=3
-                    #self.color_pub.publish(self.color_imagen)
                 else:
                     pass
         self.color_pub.publish(self.color_imagen)
@@ -92,7 +79,9 @@ class procesamiento:
            return
         detection = self.detect_traffic_light(self.image)
         if detection is not None:
-            ros_img = self.bridge.cv2_to_imgmsg(detection)
+            detection_rgb = cv2.cvtColor(detection, cv2.COLOR_BGR2RGB)
+            #ros_img = self.bridge.cv2_to_imgmsg(detection)
+            ros_img = self.bridge.cv2_to_imgmsg(detection_rgb)
             self.image_pub.publish(ros_img)
    
 if __name__ == "__main__":
