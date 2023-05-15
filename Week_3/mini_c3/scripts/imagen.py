@@ -6,6 +6,7 @@ import numpy as np
 import rospy
 import cv_bridge
 from sensor_msgs.msg import Image
+from std_msgs.msg import Float32
 
 class procesamiento:
     def __init__(self):
@@ -17,11 +18,12 @@ class procesamiento:
         self.green_time = 0
         self.red_time = 0
         self.yellow_time = 0
+        self.color_imagen=0
 	#Definir suscriptores y publicadores
         self.image_sub = rospy.Subscriber('/video_source/raw',Image, self.image_callback) 
 
         self.image_pub = rospy.Publisher('/procesada',Image, queue_size=10)
-
+        self.color_pub = rospy.Publisher('/color',Float32, queue_size=10)
     def image_callback(self,msg):
         self.image = self.bridge.imgmsg_to_cv2(msg,desired_encoding='bgr8')
 
@@ -42,6 +44,7 @@ class procesamiento:
                                param1=50, param2=30,
                                minRadius=50, maxRadius=70)
         if circles is not None:
+            self.color_pub=0
             circles = np.uint16(np.around(circles))
             for i in circles[0,:]:
                 color = frame[i[1], i[0]]
@@ -51,24 +54,36 @@ class procesamiento:
                     self.yellow_time = 0
                     self.green_time = 0
                     self.red_time += 1
-                    if self.red_time > 2*30: # 2 segundos a una frecuencia de 30 fps
-                        print("1")
+                    self.color_imagen=1
+                    #self.color_pub.publish(self.color_imagen)
+                    #if self.red_time > 2*30: # 1 segundos a una frecuencia de 30 fps
+                    #    self.color_imagen=1
                 elif color[2] > 100 and color[1] > 100 and color[0] < 100:
                     cv2.circle(frame,(i[0],i[1]),i[2],(0,255,255),2)
                     cv2.putText(frame, 'amarillo', (i[0], i[1]), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 255, 255), lineType=cv2.LINE_AA)
                     self.yellow_time += 1
-                    if self.yellow_time > 2*30: # 2 segundos a una frecuencia de 30 fps
-                        print("2")
-                        self.red_time = 0
-                        self.green_time = 0
+                    self.red_time = 0
+                    self.green_time = 0
+                    self.color_imagen=2
+                    #self.color_pub.publish(self.color_imagen)
+
+#                    if self.yellow_time > 2*30: # 2 segundos a una frecuencia de 30 fps
+ #                       self.color_imagen=2
+
                 elif color[1] > color[0] and color[1] > color[2] and color[0] < 100 and color[2] < 100:
                     cv2.circle(frame,(i[0],i[1]),i[2],(0,255,0),2)
                     cv2.putText(frame, 'verde', (i[0], i[1]), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 255, 0), lineType=cv2.LINE_AA)
                     self.green_time += 1
-                    if self.green_time > 2*30: # 2 segundos a una frecuencia de 30 fps
-                        print("3")
+                    self.red_time = 0
+                    self.yellow_time = 0
+                    self.color_imagen=3
+                    #if self.green_time > 2*30: # 2 segundos a una frecuencia de 30 fps
+                    #    self.color_imagen=3
+                    #self.color_pub.publish(self.color_imagen)
                 else:
                     pass
+        self.color_pub.publish(self.color_imagen)
+        rospy.loginfo(self.color_imagen)
         cv2.imshow('Circulos detectados', frame)
         cv2.waitKey(1)
         return frame
@@ -79,17 +94,7 @@ class procesamiento:
         if detection is not None:
             ros_img = self.bridge.cv2_to_imgmsg(detection)
             self.image_pub.publish(ros_img)
-    #def run(self):
-     #   if self.image is None:
-      #      return
-       # #procesada = self.preprocesamiento(self.image)
-        #detection=self.detect_traffic_light(self.image)
-        #ros_img = self.bridge.cv2_to_imgmsg(procesada)
-        #ros_img = self.bridge.cv2_to_imgmsg(detection)
-        #self.image_pub.publish(ros_img)
-
-
-
+   
 if __name__ == "__main__":
     image_proc = procesamiento()
     rospy.init_node("procesamiento")
