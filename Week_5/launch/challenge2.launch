@@ -1,0 +1,9 @@
+<?xml version="1.0" ?>
+<launch>
+    <rosparam file = "$(find puzzlebot_linea)/config/setpoint_params.yaml" command = "load"  />
+        <node name="path_generator" pkg="puzzlebot_linea" type="path_generator.py" output="screen" launch-prefix="gnome-terminal --command" />
+        <node name="controller2" pkg="puzzlebot_linea" type="controller2.py" output="screen" launch-prefix="gnome-terminal --command" />
+	<node name="imag_generator" pkg="puzzlebot_linea" type="imag_generator.py" output="screen" launch-prefix="gnome-terminal --command" />
+
+	
+</launch>
